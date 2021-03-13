@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <meta property="og:title" content="USED"/>
+        <meta property="og:description" content="중고거래 사이트"/>
+        <meta property="og:image" content="{{ url_for('static', filename='ogimage.png') }}"/>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+              crossorigin="anonymous">
+
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
+
+        <script>
+            function enter_press() {
+                if(window.event.keyCode==13) {
+                    click_search()
+                }
+            }
+
+            $(function () {
+                $("#all").click(function () {
+                    var chk = $(this).is(":checked");//.attr('checked');
+                    if (chk) $(".select_market").prop('checked', true);
+                    else $(".select_market").prop('checked', false);
+                });
+            });
+
+                function click_search() {
+                    $('#search-box').children().remove();
+                    afterClick_search()
+                }
+
+            function afterClick_search() {
+                let search_word = $('#search_word').val()
+                $.ajax({
+                    type: 'GET',
+                    url: '/search',
+                    data: {'search_give': search_word},
+                    success: function (response) {
+                        let searchings = response["searching_info"]
+                        for (let i = 0; i < searchings.length; i++) {
+                            makeInfo(searchings[i]["product_url"],
+                                searchings[i]["product_img"],
+                                searchings[i]["product_name"],
+                                searchings[i]["product_price"],
+                                searchings[i]["product_location"])
+                        }
+                    }
+                })
+            }
+
+            function makeInfo(product_url, product_img, product_name, product_price, product_location) {
+                let tempHtml = `<div class="card">
+                                             <img class="card-img-top" src="${product_img}" alt="Card image cap">
+                                             <div class="card-body">
+                                              <a href="${product_url}" target="_blank" class="card-title">${product_name}</a>
+                                              <p class="card-text">${product_price}</p>
+                                              <p class="card-text comment">${product_location}</p>
+                                                </div>
+                                            </div>`;
+                $('#search-box').append(tempHtml)
+            }
+
+            function ascending_order_click() {
+                let search_word = $('#search_word').val()
+                $.ajax({
+                    type: 'GET',
+                    url: '/search',
+                    data: {'search_give': search_word},
+                    success: function (response) {
+                        let searchings = response["searching_info"]
+                        for (let i = 0; i < searchings.length; i++) {
+                            makeInfo_ascending(searchings[i]["product_url"],
+                                searchings[i]["product_img"],
+                                searchings[i]["product_name"],
+                                searchings[i]["product_price"],
+                                searchings[i]["product_location"])
+                        }
+                    }
+                })
+            }
+
+            function makeInfo_ascending(product_url, product_img, product_name, product_price, product_location) {
+                        let ascending = product_price.list
+                        let price_ascending = ascending.sort(function(a,b) {return a-b})
+                        let tempHtml = `<div class="card">
+                                             <img class="card-img-top" src="${product_img}" alt="Card image cap">
+                                             <div class="card-body">
+                                              <a href="${product_url}" target="_blank" class="card-title">${product_name}</a>
+                                              <p class="card-text">${price_ascending}</p>
+                                              <p class="card-text comment">${product_location}</p>
+                                                </div>
+                                            </div>`;
+                $('#search-box').append(tempHtml)
+            }
+
+
+            function openClose() {
+                if ($("#check_box").css("display") == "block") {
+                    $("#check_box").hide();
+                    $("#btn_check_box").text("검색할 사이트 선택");
+                } else {
+                    $("#check_box").show();
+                    $("#btn_check_box").text("검색할 사이트 선택 완료");
+                }
+            }
+        </script>
+
+        <!-- 구글폰트 -->
+        <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+
+        <title>USED</title>
+
+        <!-- style -->
+        <style type="text/css">
+            * {
+                text-align: center;
+                font-family: 'Stylish', sans-serif;
+            }
+
+            .wrap {
+                width: 900px;
+                margin: auto;
+            }
+
+            .display-4 {
+                background: #55ffaa;
+                background: -webkit-linear-gradient(left, #55ff55, #55ffff);
+                background: -moz-linear-gradient(right, #55ff55, #55ffff);
+                background: -o-linear-gradient(right, #55ff55, #55ffff);
+                background: linear-gradient(to right, #55ff55, #55ffff);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                font-size: 200px;
+                font-weight: bold;
+            }
+
+            .search_box {
+                margin-top: 50px;
+                margin-bottom: 100px;
+            }
+
+            .input-group mb-3 {
+                width: 100px;
+            }
+
+            .comment {
+                color: blue;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+
+    <div class="wrap">
+        <h class="display-4"><a href="">USED</a></h>
+        <div class="search_box">
+            <div>
+                <input id="search_word" type="search" style="width:500px;height:43px;font-size:30px;"
+                       name="search_word" onkeypress="enter_press()">
+                <input onclick="click_search()" class="m _tab_search_" type="button" value="검색">
+            </div>
+            <br>
+            <button onclick="openClose()" id="btn_check_box" type="button" class="m _tab_option_">검색할 사이트 선택</button>
+            <div id="check_box">
+                <td>
+                    <input type="checkbox" id="all" value="all">전체 선택
+                    <input class = select_market type="checkbox" id="joonggo" value="jg">중고나라
+                    <input class = select_market type="checkbox" id="carrot" value="cr">당근마켓
+                    <input class = select_market type="checkbox" id="hello" value="hl">헬로마켓
+                </td>
+            </div>
+            <button href="#" role="tab" class="m _tab_option_" aria-selected="false" onclick="ascending_order_click()"
+                    id="lowPrice">낮은가격순<i class="spnew ico_arr"></i></button>
+            <button href="#" role="tab" class="m _tab_option_" aria-selected="false" onclick="return tCR('a=fno.sortlink');"
+               id="highPrice">높은가격순<i class="spnew ico_arr"></i></button>
+        </div>
+        <div class="card-columns" id="search-box">
+        </div>
+    </div>
+    </body>
+
+</html>
